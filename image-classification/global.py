@@ -55,7 +55,8 @@ def fd_histogram(image, mask=None):
 train_labels = os.listdir(train_path)
 
 # sort the training labels
-train_labels.sort()
+train_labels.sort() #relies on 'test' folder being l_case
+train_labels = train_labels[0:-1]
 print(train_labels)
 
 # empty lists to hold feature vectors and labels
