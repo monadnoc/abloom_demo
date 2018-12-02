@@ -13,7 +13,7 @@ fixed_size = tuple((500, 500))
 # path to training data
 train_path = "dataset/train"
 
-# no.of.trees for Random Forests
+# no.of.trees for Random Forest
 num_trees = 100
 
 # bins for histogram
@@ -31,6 +31,7 @@ def fd_hu_moments(image):
     feature = cv2.HuMoments(cv2.moments(image)).flatten()
     return feature
 
+
 # feature-descriptor-2: Haralick Texture
 def fd_haralick(image):
     # convert the image to grayscale
@@ -40,8 +41,9 @@ def fd_haralick(image):
     # return the result
     return haralick
 
+
 # feature-descriptor-3: Color Histogram
-def fd_histogram(image, mask=None):
+def fd_histogram(image, mask = None):
     # convert the image to HSV color-space
     image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     # compute the color histogram
@@ -55,8 +57,8 @@ def fd_histogram(image, mask=None):
 train_labels = os.listdir(train_path)
 
 # sort the training labels
-train_labels.sort() #relies on 'test' folder being l_case
-train_labels = train_labels[0:-1]
+train_labels.sort()
+train_labels = train_labels[0:-1] #relies on 'test' folder being lower case
 print(train_labels)
 
 # empty lists to hold feature vectors and labels
@@ -67,7 +69,7 @@ i, j = 0, 0
 k = 0
 
 # num of images per class
-images_per_class = 5
+#images_per_class = 13 #would have to be 5 or less for original data
 
 #%%time
 # loop over the training data sub-folders
@@ -81,6 +83,12 @@ for training_name in train_labels:
     k = 1
     # loop over the images in each sub-folder
     for x in os.listdir(dir):
+    #########################################
+    #alternative hard-codes #img/class
+    # for x in range(images_per_class):
+        #arr = os.listdir(dir)
+        #file = dir + "/" + str(arr[x])
+    #########################################
         # get the image file name
         file = dir + "/" + str(x)
 
@@ -109,28 +117,28 @@ for training_name in train_labels:
     print("[STATUS] processed folder: {}".format(current_label))
     j += 1
 
-print ("[STATUS] completed Global Feature Extraction...")
+print("[STATUS] completed Global Feature Extraction...")
 
 #%%time
 # get the overall feature vector size
-print ("[STATUS] feature vector size {}".format(np.array(global_features).shape))
+print("[STATUS] feature vector size {}".format(np.array(global_features).shape))
 
 # get the overall training label size
-print ("[STATUS] training Labels {}".format(np.array(labels).shape))
+print("[STATUS] training Labels {}".format(np.array(labels).shape))
 
 # encode the target labels
 targetNames = np.unique(labels)
 le = LabelEncoder()
 target = le.fit_transform(labels)
-print ("[STATUS] training labels encoded...")
+print("[STATUS] training labels encoded...")
 
 # normalize the feature vector in the range (0-1)
 scaler = MinMaxScaler(feature_range=(0, 1))
 rescaled_features = scaler.fit_transform(global_features)
-print ("[STATUS] feature vector normalized...")
+print("[STATUS] feature vector normalized...")
 
-print ("[STATUS] target labels: {}".format(target))
-print ("[STATUS] target labels shape: {}".format(target.shape))
+print("[STATUS] target labels: {}".format(target))
+print("[STATUS] target labels shape: {}".format(target.shape))
 
 # save the feature vector using HDF5
 h5f_data = h5py.File('output/data.h5', 'w')
